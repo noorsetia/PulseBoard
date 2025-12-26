@@ -2,6 +2,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
 import { ThemeToggle } from '../common/ThemeToggle';
+import { KeyboardShortcutsHelp } from '../common/KeyboardShortcutsHelp';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
+import { toggleTheme } from '../../features/theme/themeSlice';
+import { setFilter } from '../../features/tasks/tasksSlice';
 
 export const Layout = ({ children }) => {
   const dispatch = useDispatch();
@@ -15,6 +19,47 @@ export const Layout = ({ children }) => {
   };
 
   const isActive = (path) => location.pathname === path;
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'd',
+      ctrl: true,
+      callback: () => dispatch(toggleTheme()),
+    },
+    {
+      key: '1',
+      ctrl: true,
+      callback: () => {
+        dispatch(setFilter('all'));
+        navigate('/dashboard');
+      },
+    },
+    {
+      key: '2',
+      ctrl: true,
+      callback: () => {
+        dispatch(setFilter('pending'));
+        navigate('/dashboard');
+      },
+    },
+    {
+      key: '3',
+      ctrl: true,
+      callback: () => {
+        dispatch(setFilter('in-progress'));
+        navigate('/dashboard');
+      },
+    },
+    {
+      key: '4',
+      ctrl: true,
+      callback: () => {
+        dispatch(setFilter('done'));
+        navigate('/dashboard');
+      },
+    },
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -98,6 +143,9 @@ export const Layout = ({ children }) => {
           </p>
         </div>
       </footer>
+
+      {/* Keyboard Shortcuts Help */}
+      <KeyboardShortcutsHelp />
     </div>
   );
 };

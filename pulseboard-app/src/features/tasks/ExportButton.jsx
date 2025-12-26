@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectFilteredTasks } from './tasksSlice';
-import Button from '../../components/common/Button';
+import { Button } from '../../components/common/Button';
 
 const ExportButton = () => {
   const filteredTasks = useSelector(selectFilteredTasks);

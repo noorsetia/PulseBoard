@@ -6,6 +6,8 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { TaskForm } from '../features/tasks/TaskForm';
 import { TaskList } from '../features/tasks/TaskList';
+import { ActivityTimeline } from '../features/analytics/ActivityTimeline';
+import { TaskStatsWidget } from '../features/tasks/TaskStatsWidget';
 
 export const DashboardPage = () => {
   const [showTaskForm, setShowTaskForm] = useState(false);
@@ -99,10 +101,19 @@ export const DashboardPage = () => {
           </div>
         )}
 
-        {/* Recent Tasks */}
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Your Tasks</h2>
-          <TaskList />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Tasks - Takes 2 columns */}
+          <div className="lg:col-span-2">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Your Tasks</h2>
+            <TaskList />
+          </div>
+
+          {/* Sidebar - Takes 1 column */}
+          <div className="lg:col-span-1 space-y-6">
+            <TaskStatsWidget />
+            <ActivityTimeline />
+          </div>
         </div>
       </div>
     </Layout>

@@ -10,6 +10,9 @@ const initialState = {
   searchQuery: '',
   priorityFilter: 'all',
   tagFilter: 'all',
+  activities: localStorage.getItem('activities')
+    ? JSON.parse(localStorage.getItem('activities'))
+    : [],
 };
 
 const tasksSlice = createSlice({
@@ -30,13 +33,34 @@ const tasksSlice = createSlice({
       };
       state.tasks.unshift(newTask);
       localStorage.setItem('tasks', JSON.stringify(state.tasks));
+      
+      // Add activity
+      const activity = {
+        id: Date.now(),
+        type: 'created',
+        description: `Created task: "${newTask.title}"`,
+        timestamp: new Date().toISOString(),
+      };
+      state.activities.unshift(activity);
+      localStorage.setItem('activities', JSON.stringify(state.activities));
     },
     updateTaskStatus: (state, action) => {
       const task = state.tasks.find(t => t.id === action.payload.id);
       if (task) {
+        const oldStatus = task.status;
         task.status = action.payload.status;
         task.updatedAt = new Date().toISOString();
         localStorage.setItem('tasks', JSON.stringify(state.tasks));
+        
+        // Add activity
+        const activity = {
+          id: Date.now(),
+          type: 'status_changed',
+          description: `Changed "${task.title}" status from ${oldStatus} to ${action.payload.status}`,
+          timestamp: new Date().toISOString(),
+        };
+        state.activities.unshift(activity);
+        localStorage.setItem('activities', JSON.stringify(state.activities));
       }
     },
     updateTask: (state, action) => {
@@ -49,11 +73,34 @@ const tasksSlice = createSlice({
         task.tags = action.payload.tags || task.tags;
         task.updatedAt = new Date().toISOString();
         localStorage.setItem('tasks', JSON.stringify(state.tasks));
+        
+        // Add activity
+        const activity = {
+          id: Date.now(),
+          type: 'updated',
+          description: `Updated task: "${task.title}"`,
+          timestamp: new Date().toISOString(),
+        };
+        state.activities.unshift(activity);
+        localStorage.setItem('activities', JSON.stringify(state.activities));
       }
     },
     deleteTask: (state, action) => {
+      const task = state.tasks.find(t => t.id === action.payload);
+      const taskTitle = task ? task.title : 'Unknown task';
+      
       state.tasks = state.tasks.filter(t => t.id !== action.payload);
       localStorage.setItem('tasks', JSON.stringify(state.tasks));
+      
+      // Add activity
+      const activity = {
+        id: Date.now(),
+        type: 'deleted',
+        description: `Deleted task: "${taskTitle}"`,
+        timestamp: new Date().toISOString(),
+      };
+      state.activities.unshift(activity);
+      localStorage.setItem('activities', JSON.stringify(state.activities));
     },
     setFilter: (state, action) => {
       state.filter = action.payload;
